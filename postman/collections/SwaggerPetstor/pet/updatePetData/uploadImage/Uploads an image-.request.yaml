@@ -1,0 +1,47 @@
+$kind: http-request
+name: Uploads an image.
+description: Upload image of the pet.
+url: "{{baseUrl}}/pet/:petId/uploadImage?additionalMetadata=Some pet"
+method: POST
+headers:
+  Content-Type: application/octet-stream
+  Accept: application/json
+queryParams:
+  - key: additionalMetadata
+    value: Some pet
+    description: Additional Metadata
+pathVariables:
+  - key: petId
+    value: "{{pet_id}}"
+    description: ID of pet to update
+body:
+  type: file
+  content:
+    src: postman-cloud:///1f1bfe1c-aa0a-4af0-9cc0-22814179dead
+auth:
+  type: oauth2
+  credentials:
+    authUrl: https://petstore3.swagger.io/oauth/authorize
+    scope: write:pets read:pets
+    grant_type: implicit
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Проверка что указана ссылка на файл картинки\", () => {\r
+
+      \    const jsonData = pm.response.json();\r
+
+      \    pm.expect(jsonData.photoUrls.length).is.greaterThan(0);\r
+
+      });"
+    language: text/javascript
+settings: {}
+examples: ./.resources/Uploads an image-.resources/examples
+order: 1000

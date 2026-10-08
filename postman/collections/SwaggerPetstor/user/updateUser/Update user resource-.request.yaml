@@ -1,0 +1,59 @@
+$kind: http-request
+name: Update user resource.
+description: This can only be done by the logged in user.
+url: "{{baseUrl}}/user/:username"
+method: PUT
+headers:
+  Content-Type: application/json
+pathVariables:
+  username: "{{userName}}"
+body:
+  type: json
+  content: |-
+    {
+      "id": 10,
+      "username": "{{$randomUserName}}",
+      "firstName": "{{firstName}}",
+      "lastName": "{{lastName}}",
+      "email": "{{email}}",
+      "password": "{{password}}",
+      "phone": "{{phone}}",
+      "userStatus": {{userStatus}}
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      let body = null;
+      let parseError = null;
+
+      try {
+          body = pm.response.json();
+      }
+      catch (e) {
+          parseError = e;
+      }
+
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Проверка что JSON ответа валидный", () => {
+          pm.expect(() => {pm.response.json(); }).not.to.throw();
+      });
+
+      pm.test("Тело запроса является валидным JSON", () => {
+          pm.expect(parseError, `тело запроса не парсится: ${parseError}`).to.equal(null);
+      });
+
+      pm.test("Проверка обновления username", () => {
+          pm.collectionVariables.set("userName", body.username);
+          pm.expect(body.username, "username в ответе не совпадает с обновляемым").to.eql(pm.collectionVariables.get("userName"));
+      });
+
+      pm.test("Проверка что остальные данные пользователя не обновились", () => {
+          pm.expect(body.firstName, "обновление firstName не применилось").to.eql(pm.collectionVariables.get("firstName"));
+      });
+    language: text/javascript
+settings: {}
+examples: ./.resources/Update user resource-.resources/examples
+order: 1000

@@ -1,0 +1,25 @@
+$kind: http-request
+description: Существующий id из числового диапазона, но записи нет
+url: "{{baseUrl}}/pet/999999999"
+method: GET
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 404", function () {
+          pm.response.to.have.status(404);
+      });
+
+      pm.test("Тело ответа содержит сообщение об ошибке", () => {
+          pm.expect(pm.response.text()).to.include("Pet not found");
+      });
+
+      /*
+      Если негативные проверки запускаем в одном ране с позитивными,
+      то в параметрах можно указать переменную из коллекции, 
+      оставшуюся после удаления животного из БД
+      */
+    language: text/javascript
+settings: {}
+order: 6000

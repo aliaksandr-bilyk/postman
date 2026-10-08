@@ -1,0 +1,19 @@
+$kind: http-request
+name: Logs out current logged in user session.
+description: Log user out of the system.
+url: "{{baseUrl}}/user/logout"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test(`При логауте в ответе приходит текст "User logged out"`, () => {
+          pm.expect(pm.response.text().trim()).to.eql("User logged out");
+      });
+    language: text/javascript
+settings: {}
+examples: ./.resources/Logs out current logged in user session-.resources/examples
+order: 1000

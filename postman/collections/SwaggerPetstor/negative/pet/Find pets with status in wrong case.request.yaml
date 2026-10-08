@@ -1,0 +1,34 @@
+$kind: http-request
+description: "Эквивалентные классы: значение enum в недопустимом регистре (AVAILABLE вместо available)"
+url: "{{baseUrl}}/pet/findByStatus?status=AVAILABLE"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  status: AVAILABLE
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 400", function () {
+          pm.response.to.have.status(400);
+      });
+
+      pm.test("Ошибка имеет структуру {code, message} и code совпадает со статусом", () => {
+          const e = pm.response.json();
+          pm.expect(Object.keys(e).sort()).to.eql(["code", "message"]);
+          pm.expect(e.code).to.eql(400);
+      });
+
+      pm.test("Сообщение называет параметр и перечисляет допустимый класс значений", () => {
+          const m = pm.response.json().message;
+          pm.expect(m).to.include("query parameter `status");
+          pm.expect(m).to.include("is not in the allowable values");
+          pm.expect(m).to.include("[available, pending, sold]");
+      });
+
+      pm.test("Сообщение возвращает ровно переданное значение", function () {
+          pm.expect(pm.response.json().message).to.include("value `AVAILABLE`");
+      });
+    language: text/javascript
+settings: {}
+order: 8000

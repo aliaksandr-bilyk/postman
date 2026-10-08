@@ -1,0 +1,25 @@
+$kind: http-request
+description: "Обнаружение ошибок: SQL-инъекция в path-параметр не должна возвращать данные"
+url: "{{baseUrl}}/user/%27%20OR%201%3D1--"
+method: GET
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 404", function () {
+          pm.response.to.have.status(404);
+      });
+
+      pm.test(`Тело ровно "User not found" — инъекция не изменила ответ`, function () {
+          pm.expect(pm.response.text().trim()).to.eql("User not found");
+      });
+
+      pm.test("Инъекция не исполнена: нет данных пользователя и SQL-маркеров", function () {
+          const t = pm.response.text();
+          pm.expect(t).to.not.match(/SELECT|UNION|WHERE|password|email/i);
+          pm.expect(pm.response.code).to.not.eql(200);
+      });
+    language: text/javascript
+settings: {}
+order: 5000

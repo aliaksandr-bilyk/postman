@@ -1,0 +1,24 @@
+$kind: http-request
+description: "Граничные значения: нулевая граница диапазона — число валидно, записи нет"
+url: "{{baseUrl}}/store/order/0"
+method: GET
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 404", function () {
+          pm.response.to.have.status(404);
+      });
+
+      pm.test(`Нижняя граница диапазона (0) находится в допустимом диапазоне типа, поэтому это "не найдено", а не ошибка приведения`, () => {
+          pm.expect(pm.response.text()).to.not.include("couldn't convert");
+          pm.expect(pm.response.code).to.not.eql(400);
+      });
+
+      pm.test(`Тело равно "Order not found"`, () => {
+          pm.expect(pm.response.text().trim()).to.eql("Order not found");
+      });
+    language: text/javascript
+settings: {}
+order: 5000

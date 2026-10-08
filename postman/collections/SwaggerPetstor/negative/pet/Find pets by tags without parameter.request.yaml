@@ -1,0 +1,19 @@
+$kind: http-request
+description: Обязательный query-параметр tags не передан
+url: "{{baseUrl}}/pet/findByTags"
+method: GET
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 400", function () {
+          pm.response.to.have.status(400);
+      });
+
+      pm.test("Тело ответа содержит сообщение об ошибке", () => {
+          pm.expect(pm.response.text()).to.include("missing required query parameter `tags`");
+      });
+    language: text/javascript
+settings: {}
+order: 3000

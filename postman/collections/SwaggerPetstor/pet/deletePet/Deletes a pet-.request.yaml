@@ -1,0 +1,36 @@
+$kind: http-request
+name: Deletes a pet.
+description: Delete a pet.
+url: "{{baseUrl}}/pet/:petId"
+method: DELETE
+headers:
+  api_key: string
+pathVariables:
+  - key: petId
+    value: "{{pet_id}}"
+    description: Pet id to delete
+auth:
+  type: oauth2
+  credentials:
+    authUrl: https://petstore3.swagger.io/oauth/authorize
+    scope: write:pets read:pets
+    grant_type: implicit
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Проверка удаления животного из базы\", function () {\r
+
+      \    pm.expect(pm.response.text()).to.include(\"Pet deleted\");\r
+
+      });"
+    language: text/javascript
+settings: {}
+examples: ./.resources/Deletes a pet-.resources/examples
+order: 1000

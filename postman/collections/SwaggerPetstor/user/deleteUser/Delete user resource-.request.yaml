@@ -1,0 +1,34 @@
+$kind: http-request
+name: Delete user resource.
+description: This can only be done by the logged in user.
+url: "{{baseUrl}}/user/:username"
+method: DELETE
+pathVariables:
+  username: "{{userName}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      /*\r
+
+      Здесь для чистоты эксперимента можно обNULLять значения\r
+
+      коллекции связанные с удалённым пользователем.\r
+
+      Но в таком случае нужно будет завязываться на дефолтные значения\r
+
+      и хранить их уровнем выше (в переменных среды). \r
+
+      Возможно излишняя логика.\r
+
+      */"
+    language: text/javascript
+settings: {}
+examples: ./.resources/Delete user resource-.resources/examples
+order: 1000

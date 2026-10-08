@@ -1,0 +1,34 @@
+$kind: http-request
+name: Logs user into the system.
+description: Log into the system.
+url: "{{baseUrl}}/user/login?username={{userName}}&password={{password}}"
+method: GET
+headers:
+  Accept: application/xml
+queryParams:
+  - key: username
+    value: "{{userName}}"
+    description: The user name for login
+  - key: password
+    value: "{{password}}"
+    description: The password for login in clear text
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Ответ содержит текст подтверждения логина и id сессии", function () {
+          pm.expect(pm.response.text()).to.match(/^Logged in user session:\s*\d+\s*$/);
+      });
+
+      pm.test("Проверка отображения числового значения id сессии", function () {
+          const match = pm.response.text().match(/^Logged in user session:\s*(\d+)\s*$/);
+          pm.expect(match).to.not.equal(null);
+          pm.expect(match[1]).to.match(/^\d+$/);
+      });
+    language: text/javascript
+settings: {}
+examples: ./.resources/Logs user into the system-.resources/examples
+order: 1000

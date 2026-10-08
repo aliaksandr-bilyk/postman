@@ -1,0 +1,9 @@
+name: Swagger Petstore
+values:
+  - key: baseUrl
+    value: ""
+  - key: list_pet_statuses
+    value: ""
+  - key: password
+    value: ""
+color: 0

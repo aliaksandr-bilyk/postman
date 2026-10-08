@@ -1,0 +1,22 @@
+$kind: http-request
+description: Тело запроса не является корректным JSON
+url: "{{baseUrl}}/user"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: "{this is not valid json"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 400", function () {
+          pm.response.to.have.status(400);
+      });
+      pm.test("Тело ответа содержит сообщение об ошибке", () => {
+          pm.expect(pm.response.text()).to.include("unable to convert input to io.swagger.petstore.model.User");
+      });
+    language: text/javascript
+settings: {}
+order: 2000

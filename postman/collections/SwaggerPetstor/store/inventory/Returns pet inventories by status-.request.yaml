@@ -1,0 +1,24 @@
+$kind: http-request
+name: Returns pet inventories by status.
+description: Returns a map of status codes to quantities.
+url: "{{baseUrl}}/store/inventory"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: apikey
+  credentials:
+    key: api_key
+    value: "{{apiKey}}"
+    in: header
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });"
+    language: text/javascript
+settings: {}
+examples: ./.resources/Returns pet inventories by status-.resources/examples
+order: 1000

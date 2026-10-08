@@ -1,0 +1,20 @@
+$kind: http-request
+name: Delete purchase order by identifier.
+description: For valid response try integer IDs with value < 1000. Anything above 1000 or non-integers will generate API errors.
+url: "{{baseUrl}}/store/order/:orderId"
+method: DELETE
+pathVariables:
+  - key: orderId
+    value: "{{order_id}}"
+    description: ID of the order that needs to be deleted
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });"
+    language: text/javascript
+settings: {}
+examples: ./.resources/Delete purchase order by identifier-.resources/examples
+order: 1000

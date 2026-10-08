@@ -1,0 +1,65 @@
+$kind: http-request
+name: Update an existing pet.
+description: Update an existing pet by Id.
+url: "{{baseUrl}}/pet"
+method: PUT
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "{{pet_name}}",
+      "photoUrls": [
+        "{{$randomAnimalsImage}}",
+        "{{$randomAnimalsImage}}"
+      ],
+      "id": {{pet_id}},
+      "category": {
+        "id": 1,
+        "name": "{{pet_name}}"
+      },
+      "tags": [
+        {
+          "id": 2421,
+          "name": "string"
+        },
+        {
+          "id": 4995,
+          "name": "string"
+        }
+      ],
+      "status": "{{pet_status}}"
+    }
+auth:
+  type: oauth2
+  credentials:
+    authUrl: https://petstore3.swagger.io/oauth/authorize
+    scope: write:pets read:pets
+    grant_type: implicit
+scripts:
+  - type: afterResponse
+    code: "const reqObj = JSON.parse(pm.request.body.raw);\r
+
+      const resObj = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Тело запроса и тело ответа полностью совпадают\", function () {\r
+
+      \    pm.expect(reqObj).to.eql(resObj);\r
+
+      });"
+    language: text/javascript
+settings: {}
+examples: ./.resources/Update an existing pet-.resources/examples
+order: 2000
